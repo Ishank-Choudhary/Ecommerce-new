@@ -1,9 +1,16 @@
 package com.ecommerce.project.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
+@Entity
 public class Category {
 
-    private Long categoryId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long categoryId; // primary key
     private String categoryName;
 
     public Long getCategoryId() {
@@ -20,6 +27,10 @@ public class Category {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    // default constructor is good to have
+    public Category() {
     }
 
     public Category(Long categoryId, String categoryName) {
