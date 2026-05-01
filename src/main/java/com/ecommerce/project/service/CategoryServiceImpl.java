@@ -1,55 +1,49 @@
 package com.ecommerce.project.service;
 
+import com.ecommerce.project.Repository.CategoryRepository;
 import com.ecommerce.project.model.Category;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.Iterator;
+
 import java.util.List;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
-    private List<Category> categories = new ArrayList<>();
-    private Long next = 1L;
+
+    private final CategoryRepository categoryRepository;
+
+    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 
     @Override
     public List<Category> getAllCategories() {
-        return categories;
+        return categoryRepository.findAll();
     }
 
     @Override
     public Category createCategory(Category category) {
-        category.setCategoryId(next++);
-        categories.add(category);
-        return category;
+        return categoryRepository.save(category); // ID auto-generated
     }
 
     @Override
     public Category deleteCategory(Long id) {
-        Iterator<Category> iterator = categories.iterator();
-        while (iterator.hasNext()) {
-            Category c = iterator.next();
+        Category c = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
 
-            if (c.getCategoryId().equals(id)) {
-                iterator.remove();
-                return c;
-            }
-        }
-        throw new RuntimeException("Category not found");
+        categoryRepository.delete(c);
+        return c;
     }
 
     @Override
-    public Category updateCategory(Long id,Category updatedCategory) {
-        Iterator<Category> iterator = categories.iterator();
-        while(iterator.hasNext()){
-            Category c = iterator.next();
+    public Category updateCategory(Long id, Category updatedCategory) {
 
-            if(c.getCategoryId().equals(id)){
-                if(updatedCategory.getCategoryName()!=null){
-                    c.setCategoryName(updatedCategory.getCategoryName());
-                }
-                return  c;
-            }
+        Category c = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        if (updatedCategory.getCategoryName() != null) {
+            c.setCategoryName(updatedCategory.getCategoryName());
         }
-        throw new RuntimeException("Category not found");
+
+        return categoryRepository.save(c);
     }
 }
