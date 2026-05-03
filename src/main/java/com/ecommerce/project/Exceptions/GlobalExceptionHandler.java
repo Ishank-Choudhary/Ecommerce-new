@@ -1,14 +1,15 @@
 package com.ecommerce.project.Exceptions;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler{
@@ -21,5 +22,26 @@ public class GlobalExceptionHandler{
        }
         return ResponseEntity.badRequest().body(response);
     }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponseStructure> resourceNotFound(ResourceNotFoundException e){
+        ErrorResponseStructure errorResponseStructure = new ErrorResponseStructure(
+                HttpStatus.NOT_FOUND.value(),
+                e.getMessage(),
+                System.currentTimeMillis()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseStructure);
+    }
+
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponseStructure> handleAlreadyExists(ResourceAlreadyExistsException e){
+        ErrorResponseStructure errorResponseStructure = new ErrorResponseStructure(
+                HttpStatus.CONFLICT.value(),
+                e.getMessage(),
+                System.currentTimeMillis()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponseStructure);
+    }
+
 
 }

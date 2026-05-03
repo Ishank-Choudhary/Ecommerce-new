@@ -15,7 +15,6 @@ import java.util.List;
 public class CategoryController {
 
     private CategoryService categoryService; // to store dependency
-    private Category category;
 
     public CategoryController(CategoryService categoryService) { // to inject dependency
         this.categoryService = categoryService;
@@ -37,23 +36,18 @@ public class CategoryController {
    //@DeleteMapping("/api/public/deleteCategory/{id}")
     @RequestMapping(value = "/deleteCategory/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteCategory(@PathVariable Long id){
-        try{
-            Category deleted =  categoryService.deleteCategory(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deleted);
-        }catch (RuntimeException e){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Category not found");
-        }
+        categoryService.deleteCategory(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
     }
 
     //@PutMapping("/api/public/updateCategory/{id}")
     @RequestMapping(value = "/updateCategory/{id}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateCategory(@PathVariable Long id, @RequestBody Category updatedCategory){
-        try{
-            Category updated = categoryService.updateCategory(id,updatedCategory);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Category updated successfully");
-        }catch (RuntimeException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category not found");
-        }
+
+        categoryService.updateCategory(id,updatedCategory);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Category updated successfully");
+
     }
 
 }
