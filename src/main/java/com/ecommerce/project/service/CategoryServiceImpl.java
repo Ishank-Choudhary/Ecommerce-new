@@ -4,30 +4,42 @@ import com.ecommerce.project.Exceptions.ResourceAlreadyExistsException;
 import com.ecommerce.project.Exceptions.ResourceNotFoundException;
 import com.ecommerce.project.Repository.CategoryRepository;
 import com.ecommerce.project.model.Category;
+import com.ecommerce.project.payload.CategoryDTO;
+import com.ecommerce.project.payload.CategoryResponse;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private final CategoryRepository categoryRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     public CategoryServiceImpl(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 
     @Override
-    public List<Category> getAllCategories() {
-        List<Category> categories = categoryRepository.findAll();
+    public CategoryResponse getAllCategories() {
+        List<Category> categories = categoryRepository.findAll(); // fetching categories from DB
 
         if (categories.isEmpty()) {
             throw new ResourceNotFoundException("No categories found");
         }
-        return categories;
+        List<CategoryDTO> categoryDTOS = categories.stream() // mapping each category object to categoryDTO
+                .map(category -> modelMapper
+                .map(category, CategoryDTO.class))
+                .collect(Collectors.toList());
+        CategoryResponse categoryResponse = new CategoryResponse();
+        categoryResponse.setCategoryList(categoryDTOS); // changing the dto to category response
+        return categoryResponse;
     }
 
     @Override
