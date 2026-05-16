@@ -1,16 +1,15 @@
 package com.ecommerce.project.service;
 
 import com.ecommerce.project.model.Category;
-import com.ecommerce.project.payload.CategoryDTO;
-import com.ecommerce.project.payload.CategoryResponse;
-
-import java.util.List;
+import com.ecommerce.project.payload.CategoryRequestDTO;
+import com.ecommerce.project.payload.CategoryResponseDTO;
 
 public interface CategoryService {
 
-    CategoryResponse getAllCategories();
-    Category createCategory(Category category);
+    CategoryResponseDTO getAllCategories(Integer pageNumber, Integer pageSize);
+    CategoryRequestDTO getCategoryById(Long id);
+    CategoryRequestDTO createCategory(CategoryRequestDTO categoryRequestDTO);
     Category deleteCategory(Long id);
-    Category updateCategory(Long id,Category updatedCategory);
+    CategoryRequestDTO updateCategory(Long id,CategoryRequestDTO updatedCategory);
 
 }

@@ -3,13 +3,13 @@ package com.ecommerce.project.payload;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+
+import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 // Request DTOs are used to receive input from the client
-public class CategoryDTO {
-    private Long categoryId;
+public class CategoryRequestDTO implements Serializable {
     private String categoryName;
 }
