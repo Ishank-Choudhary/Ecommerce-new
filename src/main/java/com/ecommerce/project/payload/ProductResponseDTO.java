@@ -12,9 +12,9 @@ import java.util.List;
 public class ProductResponseDTO {
     private static final long serialVersionUID = 1L;
     private List<ProductRequestDTO> content;
-//    private Integer pageNumber;
-//    private Integer pageSize;
-//    private Integer totalPages;
-//    private Long totalElements;
-//    private boolean lastPage;
+    private Integer pageNumber;
+    private Integer pageSize;
+    private Integer totalPages;
+    private Long totalElements;
+    private boolean lastPage;
 }

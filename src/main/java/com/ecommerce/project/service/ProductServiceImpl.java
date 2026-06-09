@@ -8,6 +8,10 @@ import com.ecommerce.project.model.Product;
 import com.ecommerce.project.payload.ProductRequestDTO;
 import com.ecommerce.project.payload.ProductResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,17 +56,33 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public ProductResponseDTO getAllProductByCategoryId(Long categoryId) {
-        List<Product> products =
-                productRepository
-                        .findByCategoryCategoryId(categoryId);
+    public ProductResponseDTO getAllProductByCategoryId(Long categoryId,
+                                                        Integer pageNumber,
+                                                        Integer pageSize,
+                                                        String sortBy,
+                                                        String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber,pageSize,sort);
+
+        Page<Product> page = productRepository.findByCategoryCategoryId(categoryId,
+                pageable);
 
         List<ProductRequestDTO> productDTOs =
-                products.stream()
+                page.getContent()
+                        .stream()
                         .map(this::mapToDTO)
                         .toList();
+        ProductResponseDTO responseDTO = new ProductResponseDTO();
+        responseDTO.setContent(productDTOs);
+        responseDTO.setPageNumber(page.getNumber());
+        responseDTO.setPageSize(page.getSize());
+        responseDTO.setTotalPages(page.getTotalPages());
+        responseDTO.setTotalElements(page.getTotalElements());
+        responseDTO.setLastPage(page.isLast());
 
-        return new ProductResponseDTO(productDTOs);
+        return responseDTO;
     }
 
     @Override
@@ -80,6 +100,7 @@ public class ProductServiceImpl implements ProductService{
         product.setQuantity(dto.getQuantity());
         product.setPrice(dto.getPrice());
         product.setSpecialPrice(dto.getSpecialPrice());
+        product.setDiscount(dto.getDiscount());
 
         Product updated =
                 productRepository.save(product);
@@ -112,6 +133,7 @@ public class ProductServiceImpl implements ProductService{
         dto.setQuantity(product.getQuantity());
         dto.setPrice(product.getPrice());
         dto.setSpecialPrice(product.getSpecialPrice());
+        dto.setDiscount(product.getDiscount());
 
         return dto;
     }
@@ -123,6 +145,7 @@ public class ProductServiceImpl implements ProductService{
         product.setQuantity(dto.getQuantity());
         product.setPrice(dto.getPrice());
         product.setSpecialPrice(dto.getSpecialPrice());
+        product.setDiscount(dto.getDiscount());
 
         return product;
     }

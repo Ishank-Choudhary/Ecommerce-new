@@ -1,5 +1,6 @@
 package com.ecommerce.project.controller;
 
+import com.ecommerce.project.config.AppConstants;
 import com.ecommerce.project.model.Product;
 import com.ecommerce.project.payload.ProductRequestDTO;
 import com.ecommerce.project.payload.ProductResponseDTO;
@@ -41,10 +42,19 @@ public class ProductController {
 
     @GetMapping("/categories/{categoryId}/products")
     public ResponseEntity<ProductResponseDTO> getAllProductsByCategoryId(
+            @RequestParam(name="pageNumber",defaultValue = AppConstants.PAGE_NUMBER) Integer pageNumber,
+            @RequestParam(name="pageSize",defaultValue = AppConstants.PAGE_SIZE) Integer pageSize,
+            @RequestParam(name="sortBy",defaultValue = AppConstants.SORT_CATEGORIES_BY) String sortBy,
+            @RequestParam(name="sortOrder",defaultValue = AppConstants.SORT_CATEGORIES_ORDER) String sortOrder,
             @PathVariable Long categoryId) {
 
         ProductResponseDTO products =
-                productService.getAllProductByCategoryId(categoryId);
+                productService.getAllProductByCategoryId(
+                        categoryId,
+                        pageNumber,
+                        pageSize,
+                        sortBy,
+                        sortOrder);
 
         return ResponseEntity.ok(products);
     }
